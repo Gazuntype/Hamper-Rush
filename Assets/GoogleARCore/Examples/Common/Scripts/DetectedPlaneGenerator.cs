@@ -34,7 +34,7 @@ namespace GoogleARCore.Examples.Common
         /// A prefab for tracking and visualizing detected planes.
         /// </summary>
         public GameObject DetectedPlanePrefab;
-		public HelloARController controller;
+		public GameController controller;
 
         /// <summary>
         /// A list to hold new planes ARCore began tracking in the current frame. This object is used across
