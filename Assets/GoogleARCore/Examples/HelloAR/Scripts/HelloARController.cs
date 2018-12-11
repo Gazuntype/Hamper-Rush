@@ -20,65 +20,66 @@
 
 namespace GoogleARCore.Examples.HelloAR
 {
-    using System.Collections.Generic;
-    using GoogleARCore;
-    using GoogleARCore.Examples.Common;
-    using UnityEngine;
+	using System.Collections.Generic;
+	using GoogleARCore;
+	using GoogleARCore.Examples.Common;
+	using UnityEngine;
 
 #if UNITY_EDITOR
-    // Set up touch input propagation while using Instant Preview in the editor.
-    using Input = InstantPreviewInput;
+	// Set up touch input propagation while using Instant Preview in the editor.
+	using Input = InstantPreviewInput;
 #endif
 
-    /// <summary>
-    /// Controls the HelloAR example.
-    /// </summary>
-    public class HelloARController : MonoBehaviour
-    {
+	/// <summary>
+	/// Controls the HelloAR example.
+	/// </summary>
+	public class HelloARController : MonoBehaviour
+	{
 		public GameObject housePrefab;
 		private List<Vector3> edgePoint = new List<Vector3>();
-        /// <summary>
-        /// The first-person camera being used to render the passthrough camera image (i.e. AR background).
-        /// </summary>
-        public Camera FirstPersonCamera;
+		/// <summary>
+		/// The first-person camera being used to render the passthrough camera image (i.e. AR background).
+		/// </summary>
+		public Camera FirstPersonCamera;
 
-        /// <summary>
-        /// A prefab for tracking and visualizing detected planes.
-        /// </summary>
-        public GameObject DetectedPlanePrefab;
+		/// <summary>
+		/// A prefab for tracking and visualizing detected planes.
+		/// </summary>
+		public GameObject DetectedPlanePrefab;
+		public GameObject hamperPrefab;
 
-        /// <summary>
-        /// A model to place when a raycast from a user touch hits a plane.
-        /// </summary>
-        public GameObject AndyPlanePrefab;
+		/// <summary>
+		/// A model to place when a raycast from a user touch hits a plane.
+		/// </summary>
+		public GameObject AndyPlanePrefab;
 
-        /// <summary>
-        /// A model to place when a raycast from a user touch hits a feature point.
-        /// </summary>
-        public GameObject AndyPointPrefab;
+		/// <summary>
+		/// A model to place when a raycast from a user touch hits a feature point.
+		/// </summary>
+		public GameObject AndyPointPrefab;
 
-        /// <summary>
-        /// A game object parenting UI for displaying the "searching for planes" snackbar.
-        /// </summary>
-        public GameObject SearchingForPlaneUI;
+		/// <summary>
+		/// A game object parenting UI for displaying the "searching for planes" snackbar.
+		/// </summary>
+		public GameObject SearchingForPlaneUI;
 
-        /// <summary>
-        /// The rotation in degrees need to apply to model when the Andy model is placed.
-        /// </summary>
-        private const float k_ModelRotation = 180.0f;
+		/// <summary>
+		/// The rotation in degrees need to apply to model when the Andy model is placed.
+		/// </summary>
+		private const float k_ModelRotation = 180.0f;
 
-        /// <summary>
-        /// A list to hold all planes ARCore is tracking in the current frame. This object is used across
-        /// the application to avoid per-frame allocations.
-        /// </summary>
-        private List<DetectedPlane> m_AllPlanes = new List<DetectedPlane>();
+		/// <summary>
+		/// A list to hold all planes ARCore is tracking in the current frame. This object is used across
+		/// the application to avoid per-frame allocations.
+		/// </summary>
+		private List<DetectedPlane> m_AllPlanes = new List<DetectedPlane>();
 
 		private List<Vector3> houseList = new List<Vector3>();
 
-        /// <summary>
-        /// True if the app is in the process of quitting due to an ARCore connection error, otherwise false.
-        /// </summary>
-        private bool m_IsQuitting = false;
+		/// <summary>
+		/// True if the app is in the process of quitting due to an ARCore connection error, otherwise false.
+		/// </summary>
+		private bool m_IsQuitting = false;
 
 		/// <summary>
 		/// The Unity Update() method.
@@ -115,8 +116,22 @@ namespace GoogleARCore.Examples.HelloAR
 			}
 		}
 
+		public void DropHamper()
+		{
+#if !UNITY_EDITOR
+			if (Input.GetTouch(0).phase == TouchPhase.Began)
+#endif
+			if (Application.isEditor && Input.GetMouseButtonDown(0))
+			{
+				GameObject hamper;
+				hamper = Instantiate(hamperPrefab, FirstPersonCamera.transform.position, Quaternion.identity);
+				Debug.Log("Dropped hamper");
+			}
+		}
+
 		public void Update()
         {
+			DropHamper();
             _UpdateApplicationLifecycle();
 
             // Hide snackbar when currently tracking at least one plane.
