@@ -35,6 +35,8 @@ namespace GoogleARCore.Examples.HelloAR
     /// </summary>
     public class HelloARController : MonoBehaviour
     {
+		public GameObject housePrefab;
+		private List<Vector3> edgePoint = new List<Vector3>();
         /// <summary>
         /// The first-person camera being used to render the passthrough camera image (i.e. AR background).
         /// </summary>
@@ -71,15 +73,49 @@ namespace GoogleARCore.Examples.HelloAR
         /// </summary>
         private List<DetectedPlane> m_AllPlanes = new List<DetectedPlane>();
 
+		private List<Vector3> houseList = new List<Vector3>();
+
         /// <summary>
         /// True if the app is in the process of quitting due to an ARCore connection error, otherwise false.
         /// </summary>
         private bool m_IsQuitting = false;
 
-        /// <summary>
-        /// The Unity Update() method.
-        /// </summary>
-        public void Update()
+		/// <summary>
+		/// The Unity Update() method.
+		/// </summary>
+
+		public void SpawnHouses(DetectedPlane plane)
+		{
+			plane.GetBoundaryPolygon(edgePoint);
+			foreach (Vector3 p in edgePoint)
+			{
+				if (houseList.Count != 0)
+				{
+					bool close = false;
+					foreach (Vector3 housePos in houseList)
+					{
+						if (Vector3.Distance(p, housePos) < 0.2f)
+						{
+							close = true;
+						}
+					}
+					if (!close)
+					{
+						GameObject houseTemp;
+						houseTemp = Instantiate(housePrefab, p, Quaternion.identity);
+						houseList.Add(houseTemp.transform.position);
+					}
+				}
+				else
+				{
+					GameObject houseTemp;
+					houseTemp = Instantiate(housePrefab, p, Quaternion.identity);
+					houseList.Add(houseTemp.transform.position);
+				}
+			}
+		}
+
+		public void Update()
         {
             _UpdateApplicationLifecycle();
 

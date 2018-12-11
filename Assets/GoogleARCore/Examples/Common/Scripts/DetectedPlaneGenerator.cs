@@ -23,6 +23,7 @@ namespace GoogleARCore.Examples.Common
     using System.Collections.Generic;
     using GoogleARCore;
     using UnityEngine;
+	using GoogleARCore.Examples.HelloAR;
 
     /// <summary>
     /// Manages the visualization of detected planes in the scene.
@@ -33,12 +34,18 @@ namespace GoogleARCore.Examples.Common
         /// A prefab for tracking and visualizing detected planes.
         /// </summary>
         public GameObject DetectedPlanePrefab;
+		public HelloARController controller;
 
         /// <summary>
         /// A list to hold new planes ARCore began tracking in the current frame. This object is used across
         /// the application to avoid per-frame allocations.
         /// </summary>
         private List<DetectedPlane> m_NewPlanes = new List<DetectedPlane>();
+
+		public void Start()
+		{
+			
+		}
 
         /// <summary>
         /// The Unity Update method.
@@ -59,6 +66,7 @@ namespace GoogleARCore.Examples.Common
                 // the origin with an identity rotation since the mesh for our prefab is updated in Unity World
                 // coordinates.
                 GameObject planeObject = Instantiate(DetectedPlanePrefab, Vector3.zero, Quaternion.identity, transform);
+				controller.SpawnHouses(m_NewPlanes[i]);
                 planeObject.GetComponent<DetectedPlaneVisualizer>().Initialize(m_NewPlanes[i]);
             }
         }
