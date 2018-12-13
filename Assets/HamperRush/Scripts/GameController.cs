@@ -5,7 +5,7 @@ using GoogleARCore;
 
 public class GameController : MonoBehaviour
 {
-	public GameObject housePrefab;
+	public List<GameObject> housePrefab;
 	private List<Vector3> edgePoint = new List<Vector3>();
 	public GameObject hamperPrefab;
 	private List<Vector3> houseList = new List<Vector3>();
@@ -41,14 +41,16 @@ public class GameController : MonoBehaviour
 				if (!close)
 				{
 					GameObject houseTemp;
-					houseTemp = Instantiate(housePrefab, p, Quaternion.identity);
+					int rand = Random.Range(0, housePrefab.Count - 1);
+					houseTemp = Instantiate(housePrefab[rand], p, Quaternion.identity);
 					houseList.Add(houseTemp.transform.position);
 				}
 			}
 			else
 			{
 				GameObject houseTemp;
-				houseTemp = Instantiate(housePrefab, p, Quaternion.identity);
+				int rand = Random.Range(0, housePrefab.Count - 1);
+				houseTemp = Instantiate(housePrefab[rand], p, Quaternion.identity);
 				houseList.Add(houseTemp.transform.position);
 			}
 		}
